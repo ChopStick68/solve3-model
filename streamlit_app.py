@@ -151,10 +151,13 @@ elif page == "Farming":
         myfarm = st.number_input("Your Farm (in $):", min_value=0.0, value=1000000.0, format="%.2f")
 
     with col3:
-        myfees = st.number_input("Your Fees (in $):", min_value=0.0, value=15000.0, format="%.2f")
+        myfees = st.number_input("Your Fees (in $):", min_value=0.0, value=50000.0, format="%.2f")
 
     with col4:
-        emissions_per_epoch = st.number_input("Emissions per Epoch (in $):", min_value=0.0, value=300000.0, format="%.2f")
+        token_price = st.number_input("Token Price (in $):", value=1.0, format="%.2f")
+
+    # Calculate emissions per epoch based on the token price
+    emissions_per_epoch = 1300000 * token_price
 
     fees_kept = 0.75 * myfees
     additional_earnings = emissions_per_epoch * myfarm / totaltvl if totaltvl > 0 else 0
@@ -192,19 +195,10 @@ elif page == "Farming":
     # Emissions section
     st.write("### Emissions")
 
-    # Inputs for Token Price and Redemption Rate
-    col1, col2 = st.columns(2)
-
-    with col1:
-        token_price = st.number_input("Token Price (in $):", value=0.17, format="%.2f")
-
-    with col2:
-        redemption_rate = st.number_input("Service fee:", min_value=0.0, value=0.0, format="%.2f")
-
     # Generate data for the emissions plot
     i_values = np.arange(1, 51)
     emissions_values = 2000000 * (0.99 ** i_values)
-    adjusted_emissions_values = emissions_values * token_price * (1 - redemption_rate)
+    adjusted_emissions_values = emissions_values * token_price
 
     # Original emissions plot
     emissions_fig = go.Figure(data=go.Scatter(x=i_values, y=emissions_values, mode='lines+markers', name="Emissions"))
