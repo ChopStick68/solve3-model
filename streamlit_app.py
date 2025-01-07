@@ -6,6 +6,14 @@ import numpy as np
 # Add a page selector
 page = st.sidebar.radio("Choose a Page", ["Solve3-Investor-Calculator", "Emissions and Farming"])
 
+import streamlit as st
+import plotly.graph_objects as go
+import numpy as np
+
+# --- PAGE 1: Presale Earnings Calculator ---
+# Add a page selector
+page = st.sidebar.radio("Choose a Page", ["Solve3-Investor-Calculator", "Emissions and Farming"])
+
 if page == "Solve3-Investor-Calculator":
     # App title for page 1
     st.title("Solve3-Investor-Calculator")
@@ -44,8 +52,8 @@ if page == "Solve3-Investor-Calculator":
     # Update the layout for the weekly earnings plot
     earnings_fig.update_layout(
         title="Weekly Earnings Over Time for Different Investments",
-        xaxis_title="Epoch (i)",
-        yaxis_title="Earnings in $",
+        xaxis=dict(showticklabels=False),  # Hides x-axis labels
+        yaxis=dict(tickprefix="$"),  # Adds $ sign to y-axis values
         legend_title="Investment Amount",
         template="plotly_white"
     )
@@ -68,8 +76,8 @@ if page == "Solve3-Investor-Calculator":
     # Update the layout for the cumulative earnings plot
     cumulative_fig.update_layout(
         title="Cumulative Earnings Over Time for Different Investments",
-        xaxis_title="Epoch (i)",
-        yaxis_title="Total Earnings in $",
+        xaxis=dict(showticklabels=False),  # Hides x-axis labels
+        yaxis=dict(tickprefix="$"),  # Adds $ sign to y-axis values
         legend_title="Investment Amount",
         template="plotly_white"
     )
@@ -80,47 +88,53 @@ if page == "Solve3-Investor-Calculator":
 
     st.write("Your numbers get better if you farm on the side and keep locking regularly!")
 
-    # Custom Investment Section
+    # Custom investment section
     st.write("### Custom Investment")
-    custom_investment = st.number_input("Enter your investment amount (in $):", min_value=0.0, value=25000.0, format="%.2f")
+    custom_investment = st.number_input("Enter your investment amount ($):", min_value=0.0, value=25000.0, format="%.2f")
 
     # Create a figure for weekly earnings for custom investment
     custom_earnings_fig = go.Figure()
-    weekly_earnings = custom_investment / 0.17 * 2 / (25000000 + cumulative_emissions * locking_rate) * fees_bribes
+
+    # Calculate weekly earnings for custom investment
+    weekly_earnings_custom = custom_investment / 0.17 * 2 / (25000000 + cumulative_emissions * locking_rate) * fees_bribes
     custom_earnings_fig.add_trace(go.Scatter(
         x=i_values,
-        y=weekly_earnings,
+        y=weekly_earnings_custom,
         mode='lines+markers',
-        name=f"${custom_investment:.2f} Investment",
-        line=dict(color='#d62728')
+        name=f"Custom Investment: ${custom_investment:.2f}",
+        line=dict(color='#d62728')  # Custom color
     ))
+
+    # Update the layout for the custom weekly earnings plot
     custom_earnings_fig.update_layout(
         title=f"Weekly Earnings Over Time for Custom Investment of ${custom_investment:.2f}",
-        xaxis_title="Epoch (i)",
-        yaxis_title="Earnings in $",
-        legend_title="Investment Amount",
+        xaxis=dict(showticklabels=False),  # Hides x-axis labels
+        yaxis=dict(tickprefix="$"),  # Adds $ sign to y-axis values
         template="plotly_white"
     )
 
     # Create a figure for cumulative earnings for custom investment
     custom_cumulative_fig = go.Figure()
-    cumulative_earnings = np.cumsum(weekly_earnings)
+
+    # Calculate cumulative earnings for custom investment
+    cumulative_earnings_custom = np.cumsum(weekly_earnings_custom)  # Cumulative sum of earnings over time
     custom_cumulative_fig.add_trace(go.Scatter(
         x=i_values,
-        y=cumulative_earnings,
+        y=cumulative_earnings_custom,
         mode='lines+markers',
-        name=f"${custom_investment:.2f} Investment",
-        line=dict(color='#9467bd')
+        name=f"Custom Investment: ${custom_investment:.2f}",
+        line=dict(color='#9467bd')  # Custom color
     ))
+
+    # Update the layout for the custom cumulative earnings plot
     custom_cumulative_fig.update_layout(
         title=f"Cumulative Earnings Over Time for Custom Investment of ${custom_investment:.2f}",
-        xaxis_title="Epoch (i)",
-        yaxis_title="Total Earnings in $",
-        legend_title="Investment Amount",
+        xaxis=dict(showticklabels=False),  # Hides x-axis labels
+        yaxis=dict(tickprefix="$"),  # Adds $ sign to y-axis values
         template="plotly_white"
     )
 
-    # Display the custom earnings plots sequentially
+    # Display the custom investment plots sequentially
     st.plotly_chart(custom_earnings_fig)
     st.plotly_chart(custom_cumulative_fig)
 
