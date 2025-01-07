@@ -4,54 +4,87 @@ import numpy as np
 
 # --- PAGE 1: Presale Earnings Calculator ---
 # Add a page selector
-page = st.sidebar.radio("Choose a Page", ["Solve3-Investor-Calculator", "Emissions and Farming"])
+page = st.sidebar.radio("Choose a Page", ["Solve3-Investor-Calculator", "Farming"])
 
 if page == "Solve3-Investor-Calculator":
     # App title for page 1
     st.title("Solve3-Investor-Calculator")
     st.write("### Presale Earnings Projection")
 
-    st.write("If you invest 10k in the presale and we maintain 200k in fees and bribes, as well as a locking rate of 75%, you will earn the following amount per week (we expect the platform to grow, though):")
+st.write("We assume that you invest in the presale and the platform maintains 200k in fees+bribes/incentives (we expect this number to grow over time, though):")
 
-    # Calculate cumulative emissions (up to each week)
-    i_values = np.arange(1, 51)  # Values from 1 to 50
-    emissions_values = 2000000 * (0.99 ** i_values)  # Emissions function
-    cumulative_emissions = np.cumsum(emissions_values)  # Cumulative emissions over time
+# Initialize parameters
+i_values = np.arange(1, 51)  # Values from 1 to 50
+emissions_values = 1300000 * (0.99 ** i_values)  # Emissions function
+cumulative_emissions = np.cumsum(emissions_values)  # Cumulative emissions over time
 
-    # Calculate weekly earnings using the cumulative emissions
-    investment = 10000  # Amount invested in the presale
-    fees_bribes = 200000  # Assumed constant fees and bribes
-    locking_rate = 0.75  # Locking rate
+# Assumptions
+fees_bribes = 200000  # Assumed constant fees and bribes
+locking_rate = 0.75  # Locking rate
 
+# Investment levels
+investments = [10000, 50000, 100000]
+colors = ['#1f77b4', '#ff7f0e', '#2ca02c']  # Colors for the plots
+labels = ["$10,000 Investment", "$50,000 Investment", "$100,000 Investment"]
+
+# Create a figure for weekly earnings
+earnings_fig = go.Figure()
+
+# Calculate and add traces for each investment
+for investment, color, label in zip(investments, colors, labels):
     weekly_earnings = investment / 0.17 * 2 / (25000000 + cumulative_emissions * locking_rate) * fees_bribes
+    earnings_fig.add_trace(go.Scatter(
+        x=i_values,
+        y=weekly_earnings,
+        mode='lines+markers',
+        name=label,
+        line=dict(color=color)
+    ))
 
-    # Create a plot of weekly earnings
-    earnings_fig = go.Figure(data=go.Scatter(x=i_values, y=weekly_earnings, mode='lines+markers', name="Weekly Earnings"))
-    earnings_fig.update_layout(
-        title="Weekly Earnings Over Time",
-        xaxis_title="Epoch (i)",
-        yaxis_title="Earnings in $"
-    )
+# Update the layout for the weekly earnings plot
+earnings_fig.update_layout(
+    title="Weekly Earnings Over Time for Different Investments",
+    xaxis_title="Epoch (i)",
+    yaxis_title="Earnings in $",
+    legend_title="Investment Amount",
+    template="plotly_white"
+)
 
-    # Display cumulative earnings (sum over time)
+# Create a figure for cumulative earnings
+cumulative_fig = go.Figure()
+
+# Calculate and add traces for cumulative earnings
+for investment, color, label in zip(investments, colors, labels):
+    weekly_earnings = investment / 0.17 * 2 / (25000000 + cumulative_emissions * locking_rate) * fees_bribes
     cumulative_earnings = np.cumsum(weekly_earnings)  # Cumulative sum of earnings over time
-    cumulative_fig = go.Figure(data=go.Scatter(x=i_values, y=cumulative_earnings, mode='lines+markers', name="Cumulative Earnings"))
-    cumulative_fig.update_layout(
-        title="Cumulative Earnings Over Time",
-        xaxis_title="Epoch (i)",
-        yaxis_title="Total Earnings in $"
-    )
+    cumulative_fig.add_trace(go.Scatter(
+        x=i_values,
+        y=cumulative_earnings,
+        mode='lines+markers',
+        name=label,
+        line=dict(color=color)
+    ))
 
-    # Display the earnings plots side by side
-    col1, col2 = st.columns(2)
+# Update the layout for the cumulative earnings plot
+cumulative_fig.update_layout(
+    title="Cumulative Earnings Over Time for Different Investments",
+    xaxis_title="Epoch (i)",
+    yaxis_title="Total Earnings in $",
+    legend_title="Investment Amount",
+    template="plotly_white"
+)
 
-    with col1:
-        st.plotly_chart(earnings_fig)
+# Display the earnings plots side by side
+col1, col2 = st.columns(2)
 
-    with col2:
-        st.plotly_chart(cumulative_fig)
+with col1:
+    st.plotly_chart(earnings_fig)
 
-    st.write("Your numbers get better if you farm on the side and keep locking regularly!")
+with col2:
+    st.plotly_chart(cumulative_fig)
+
+st.write("Your numbers get better if you farm on the side and keep locking regularly!")
+
 
 # --- PAGE 2: Emissions and Farming ---
 elif page == "Emissions and Farming":
