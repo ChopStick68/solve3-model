@@ -1,10 +1,4 @@
-import streamlit as st
-import plotly.graph_objects as go
-import numpy as np
 
-# --- PAGE 1: Presale Earnings Calculator ---
-# Add a page selector
-page = st.sidebar.radio("Choose a Page", ["Solve3-Investor-Calculator", "Emissions and Farming"])
 
 import streamlit as st
 import plotly.graph_objects as go
