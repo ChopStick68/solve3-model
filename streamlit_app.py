@@ -162,7 +162,7 @@ elif page == "Farming":
 
     col1, col2 = st.columns(2)
 
-    # Pie chart
+    # Pie chart for "My Farm" as a part of total TVL
     with col1:
         if totaltvl > 0:
             labels = ['My Farm', 'Rest of TVL']
@@ -173,23 +173,22 @@ elif page == "Farming":
         else:
             st.write("Total TVL should be greater than 0 to display the pie chart.")
 
-    # Bar chart with showlegend set to False for some elements
+    # Bar chart for Fee Comparison
     with col2:
         if myfees > 0:
             fig2 = go.Figure(data=[
-                go.Bar(name='Total Fees', x=['Fees'], y=[myfees], marker_color='#ff9999'),
                 go.Bar(name='Fees received on Orca', x=['Fees'], y=[0.87 * myfees], marker_color='#ffcc66'),
                 go.Bar(name='Fees received on Raydium', x=['Fees'], y=[0.84 * myfees], marker_color='#66ccff'),
                 go.Bar(name='Fees received on Solve3', x=['Fees'], y=[fees_kept], marker_color='#66b3ff', visible='legendonly'),
                 go.Bar(name='Additional Earnings on Solve3', x=['Fees'], y=[additional_earnings], marker_color='#99ff99', visible='legendonly'),
-                go.Bar(name='Total Earnings on Solve3', x=['Fees'], y=[additional_earnings + fees_kept], marker_color='#c71585', visible='legendonly'),
+                go.Bar(name='Total Earnings on Solve3', x=['Fees'], y=[additional_earnings + fees_kept], marker_color='#c71585'),
             ])
             fig2.update_layout(
                 barmode='group',
                 yaxis_title='Amount in Dollars',
                 showlegend=True  # Allow toggling bars
             )
-            st.write("### Fees Comparison")
+            st.write("### Fee Comparison")
             st.plotly_chart(fig2)
         else:
             st.write("Usual fees should be greater than 0 to display the bar chart.")
