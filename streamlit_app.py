@@ -6,7 +6,7 @@ import numpy as np
 
 # --- PAGE 1: Presale Earnings Calculator ---
 # Add a page selector
-page = st.sidebar.radio("Choose a Page", ["Solve3-Investor-Calculator", "Emissions and Farming"])
+page = st.sidebar.radio("Choose a Page", ["Solve3-Investor-Calculator", "Farming"])
 
 if page == "Solve3-Investor-Calculator":
     # App title for page 1
@@ -133,53 +133,14 @@ if page == "Solve3-Investor-Calculator":
     st.plotly_chart(custom_cumulative_fig)
 
 
-# --- PAGE 2: Emissions and Farming ---
-elif page == "Emissions and Farming":
+# --- PAGE 2: Farming ---
+elif page == "Farming":
     # App title for page 2
-    st.title("Emissions and Farming")
-    st.write("### Emissions")
-
-    # Inputs for Token Price and Redemption Rate
-    col1, col2 = st.columns(2)
-
-    with col1:
-        token_price = st.number_input("Token Price (in $):", value=0.17, format="%.2f")
-
-    with col2:
-        redemption_rate = st.number_input("Service fee:", min_value=0.0, value=0.0, format="%.2f")
-
-    # Generate data for the emissions plot
-    i_values = np.arange(1, 51)
-    emissions_values = 2000000 * (0.99 ** i_values)
-    adjusted_emissions_values = emissions_values * token_price * (1 - redemption_rate)
-
-    # Original emissions plot
-    emissions_fig = go.Figure(data=go.Scatter(x=i_values, y=emissions_values, mode='lines+markers', name="Emissions"))
-    emissions_fig.update_layout(
-        title="Emissions Over Time",
-        xaxis_title="Epoch (i)",
-        yaxis_title="Token Emissions",
-        yaxis=dict(range=[0, 2000000])
-    )
-
-    # Adjusted emissions plot
-    adjusted_emissions_fig = go.Figure(data=go.Scatter(x=i_values, y=adjusted_emissions_values, mode='lines+markers', name="Adjusted Emissions"))
-    adjusted_emissions_fig.update_layout(
-        title="Adjusted Emissions Over Time",
-        xaxis_title="Epoch (i)",
-        yaxis_title="Dollar Emissions",
-        yaxis=dict(range=[0, 2000000 * token_price * (1 - redemption_rate)])
-    )
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.plotly_chart(emissions_fig)
-
-    with col2:
-        st.plotly_chart(adjusted_emissions_fig)
-
+    st.title("Farming")
+    
+    # Farming calculator section
     st.write("### Farming Calculator")
+    
     # Farming inputs and outputs
     col1, col2, col3, col4 = st.columns(4)
 
@@ -227,3 +188,46 @@ elif page == "Emissions and Farming":
             st.plotly_chart(fig2)
         else:
             st.write("Usual fees should be greater than 0 to display the bar chart.")
+
+    # Emissions section
+    st.write("### Emissions")
+
+    # Inputs for Token Price and Redemption Rate
+    col1, col2 = st.columns(2)
+
+    with col1:
+        token_price = st.number_input("Token Price (in $):", value=0.17, format="%.2f")
+
+    with col2:
+        redemption_rate = st.number_input("Service fee:", min_value=0.0, value=0.0, format="%.2f")
+
+    # Generate data for the emissions plot
+    i_values = np.arange(1, 51)
+    emissions_values = 2000000 * (0.99 ** i_values)
+    adjusted_emissions_values = emissions_values * token_price * (1 - redemption_rate)
+
+    # Original emissions plot
+    emissions_fig = go.Figure(data=go.Scatter(x=i_values, y=emissions_values, mode='lines+markers', name="Emissions"))
+    emissions_fig.update_layout(
+        xaxis=dict(showticklabels=False),  # Remove x-axis labels
+        yaxis=dict(showticklabels=True, tickprefix="$"),  # Show y-axis labels with $
+        title="Emissions Over Time",
+        yaxis_title="Token Emissions"
+    )
+
+    # Adjusted emissions plot
+    adjusted_emissions_fig = go.Figure(data=go.Scatter(x=i_values, y=adjusted_emissions_values, mode='lines+markers', name="Adjusted Emissions"))
+    adjusted_emissions_fig.update_layout(
+        xaxis=dict(showticklabels=False),  # Remove x-axis labels
+        yaxis=dict(showticklabels=True, tickprefix="$"),  # Show y-axis labels with $
+        title="Adjusted Emissions Over Time",
+        yaxis_title="Dollar Emissions"
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.plotly_chart(emissions_fig)
+
+    with col2:
+        st.plotly_chart(adjusted_emissions_fig)
