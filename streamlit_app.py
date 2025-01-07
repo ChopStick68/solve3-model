@@ -80,6 +80,51 @@ if page == "Solve3-Investor-Calculator":
 
     st.write("Your numbers get better if you farm on the side and keep locking regularly!")
 
+    # Custom Investment Section
+    st.write("### Custom Investment")
+    custom_investment = st.number_input("Enter your investment amount (in $):", min_value=0.0, value=25000.0, format="%.2f")
+
+    # Create a figure for weekly earnings for custom investment
+    custom_earnings_fig = go.Figure()
+    weekly_earnings = custom_investment / 0.17 * 2 / (25000000 + cumulative_emissions * locking_rate) * fees_bribes
+    custom_earnings_fig.add_trace(go.Scatter(
+        x=i_values,
+        y=weekly_earnings,
+        mode='lines+markers',
+        name=f"${custom_investment:.2f} Investment",
+        line=dict(color='#d62728')
+    ))
+    custom_earnings_fig.update_layout(
+        title=f"Weekly Earnings Over Time for Custom Investment of ${custom_investment:.2f}",
+        xaxis_title="Epoch (i)",
+        yaxis_title="Earnings in $",
+        legend_title="Investment Amount",
+        template="plotly_white"
+    )
+
+    # Create a figure for cumulative earnings for custom investment
+    custom_cumulative_fig = go.Figure()
+    cumulative_earnings = np.cumsum(weekly_earnings)
+    custom_cumulative_fig.add_trace(go.Scatter(
+        x=i_values,
+        y=cumulative_earnings,
+        mode='lines+markers',
+        name=f"${custom_investment:.2f} Investment",
+        line=dict(color='#9467bd')
+    ))
+    custom_cumulative_fig.update_layout(
+        title=f"Cumulative Earnings Over Time for Custom Investment of ${custom_investment:.2f}",
+        xaxis_title="Epoch (i)",
+        yaxis_title="Total Earnings in $",
+        legend_title="Investment Amount",
+        template="plotly_white"
+    )
+
+    # Display the custom earnings plots sequentially
+    st.plotly_chart(custom_earnings_fig)
+    st.plotly_chart(custom_cumulative_fig)
+
+
 # --- PAGE 2: Emissions and Farming ---
 elif page == "Emissions and Farming":
     # App title for page 2
