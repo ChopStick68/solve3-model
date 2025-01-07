@@ -74,14 +74,9 @@ if page == "Solve3-Investor-Calculator":
         template="plotly_white"
     )
 
-    # Display the earnings plots side by side
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.plotly_chart(earnings_fig)
-
-    with col2:
-        st.plotly_chart(cumulative_fig)
+    # Display the earnings plots sequentially
+    st.plotly_chart(earnings_fig)
+    st.plotly_chart(cumulative_fig)
 
     st.write("Your numbers get better if you farm on the side and keep locking regularly!")
 
